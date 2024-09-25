@@ -1,23 +1,15 @@
 import { Schema, model } from "mongoose";
-
+import bcrypt from "bcrypt"
 const userSchema = new Schema ({
     email: {
         type: String,
         required: true,
         unique: true,
-        validator: {
-            validate(v){
-                
-            }
-        }
     },
     password: {
         type: String,
-        validator: {
-            validate(v){
-                return 
-            }
-        }
+        required: true,
+
     },
     nickname: {
         type: String,
@@ -30,6 +22,15 @@ const userSchema = new Schema ({
         default: "USER"
     }
 })
+
+userSchema.pre("save", function (){
+    this.password
+    bcrypt.hash(this.password)
+})
+
+userSchema.methods.isValidPassword = async function(password){
+    return await bcrypt.compare(password, this.password)
+}
 
 
 const User = model("User", userSchema);

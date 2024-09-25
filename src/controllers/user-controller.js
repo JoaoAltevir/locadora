@@ -9,3 +9,21 @@ export const signup = async (req, res) => {
         res.status(400).json(error);
     }
 }
+
+export const login = async (req, res) => {
+    try {
+        const email = req.body.email;
+
+        const user = await User.findOne({
+            email,
+        }).exec()
+
+        if(!user || !user.isValidPassword(req.body.password)){
+            res.status(404).json({
+                error: "Email or password incorrect"
+            })
+        }
+    } catch (err) {
+        res.status(400).json(err)
+    }
+}
