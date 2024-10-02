@@ -9,12 +9,10 @@ const userSchema = new Schema ({
     password: {
         type: String,
         required: true,
-
     },
     nickname: {
         type: String,
         required: false,
-        default: this.email
     },
     role: {
         type: String,
@@ -23,14 +21,13 @@ const userSchema = new Schema ({
     }
 })
 
-userSchema.pre("save", function (){
-    this.password
-    bcrypt.hash(this.password)
+userSchema.pre("save", async function (){ 
+    this.password = await bcrypt.hash(this.password, 10)
 })
 
-userSchema.methods.isValidPassword = async function(password){
-    return await bcrypt.compare(password, this.password)
-}
+userSchema.methods.isValidPassword = async function (password) {
+    return await bcrypt.compare(password, this.password);
+};
 
 
 const User = model("User", userSchema);
